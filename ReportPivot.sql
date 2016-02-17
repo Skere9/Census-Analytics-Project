@@ -1,0 +1,32 @@
+REM
+REM DEMO_SOH_ANALYTICS_FIVE_YEAR_MOVING_AVERAGE.SQL
+REM 
+
+REM
+REM Five year moving average of population
+REM
+
+TTITLE LEFT   "Demonstration" RIGHT "Page " SQL.PNO SKIP 1 -
+       CENTER "Projected Population, 2021-2025, Florida" SKIP 1 -
+       CENTER "Source Data: CENSUS.GOV file FL2125.DAT," SKIP 2 -
+       CENTER "American Indian Non Hispanic Males" SKIP 1 -
+       CENTER "Population: Five Year Moving Average" 
+COLUMN MRG_TARGET_ID            HEADING 'MRG|TARGET|ID'            FORMAT 9999
+COLUMN YR                       HEADING 'YEAR'                     FORMAT 9999
+COLUMN AGE                      HEADING 'AGE'                      FORMAT 999
+COLUMN ANHM                     HEADING 'PROJ|ASIAN|HISP|MALE'     FORMAT 999999999
+COLUMN FIVE_YEAR_MOVING_AVERAGE HEADING 'FIVE|YEAR|MOVING|AVERAGE' FORMAT 999999999
+
+SELECT MRG_TARGET_ID
+     , YR
+     , AGE
+     , AMIND_NON_HISP_MALE ANHM
+     , AVG(AMIND_NON_HISP_MALE) OVER (
+        PARTITION BY YR
+        ORDER BY AGE
+        ROWS BETWEEN 2 PRECEDING
+                 AND 2 FOLLOWING) FIVE_YEAR_MOVING_AVERAGE
+FROM MRG_TARGET;
+
+TTITLE OFF
+CLEAR COLUMNS

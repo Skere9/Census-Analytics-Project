@@ -1,0 +1,45 @@
+REM
+REM DEMO_SOH_ANALYTICS_AMIND_TREND_SUMMARY.SQL
+REM
+
+REM
+REM That was the raw data, here is a summary report
+REM
+
+TTITLE LEFT   "Demonstration" RIGHT "Page " SQL.PNO SKIP 1 -
+       CENTER "Projected Population, 2021-2025, Florida" SKIP 1 -
+       CENTER "Source Data: CENSUS.GOV file FL2125.DAT," SKIP 2 -
+       CENTER "American Indian Non Hispanic Males" SKIP 1 -
+       CENTER "For each year, display" SKIP 1 -
+       CENTER "that year's age projected to experience " SKIP 1 -
+       CENTER "the sharpest upward move in population, " SKIP 1 -
+       CENTER "and its population that year"
+COLUMN MRG_TARGET_ID  HEADING 'MRG|TARGET|ID'        FORMAT 9999
+COLUMN YR             HEADING 'YEAR'                 FORMAT 9999
+COLUMN AGE            HEADING 'AGE'                  FORMAT A3
+COLUMN ANHM           HEADING 'PROJ|ASIAN|HISP|MALE' FORMAT 999999999
+COLUMN TREND          HEADING 'TREND'                FORMAT 999999999
+COLUMN BIGGEST_UP_AGE HEADING 'BIGGEST|UP AGE'       FORMAT 999999999
+COLUMN BIGGEST_UP_AMT HEADING 'BIGGEST|UP AMT'       FORMAT 999999999
+
+SELECT YR, BIGGEST_UP_AMT, BIGGEST_UP_AGE
+FROM (SELECT MRG_TARGET_ID
+           , YR
+           , AGE
+           , AMIND_NON_HISP_MALE ANHM
+           , TREND
+           , MAX(AGE) KEEP (DENSE_RANK LAST ORDER BY TREND) OVER (PARTITION BY YR) BIGGEST_UP_AGE
+           , MAX(TREND) OVER (PARTITION BY YR) BIGGEST_UP_AMT
+      FROM (SELECT MRG_TARGET_ID
+                 , YR
+                 , AGE
+                 , AMIND_NON_HISP_MALE
+                 , AMIND_NON_HISP_MALE - (LAG(AMIND_NON_HISP_MALE) OVER (ORDER BY YR, AGE)) TREND
+                 , LAG(AMIND_NON_HISP_MALE) OVER (ORDER BY YR, AGE) LAG
+            FROM   MRG_TARGET
+            ORDER BY YR, AGE)
+      WHERE AGE NOT IN (0,85))
+GROUP BY YR, BIGGEST_UP_AMT, BIGGEST_UP_AGE;
+
+TTITLE OFF
+CLEAR COLUMNS

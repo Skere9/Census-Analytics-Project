@@ -1,5 +1,5 @@
 REM
-REM DEMO_SOH_ANALYTICS_AHM_MOST_LEAST_SUMMARY.SQL
+REM ANALYTICS_AHM_MOST_LEAST_SUMMARY.SQL
 REM
 
 REM
@@ -9,7 +9,7 @@ REM the query below groups data to show only the
 REM results of the analysis.
 REM
 
-TTITLE LEFT   "Demonstration" RIGHT "Page " SQL.PNO SKIP 1 -
+TTITLE LEFT   "In Work" RIGHT "Page " SQL.PNO SKIP 1 -
        CENTER "Projected Population, 2021-2025, Florida" SKIP 1 -
        CENTER "Source Data: CENSUS.GOV file FL2125.DAT," SKIP 2 -
        CENTER "Asian Hispanic Males" SKIP 1 -
